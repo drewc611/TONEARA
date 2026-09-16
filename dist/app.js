@@ -11,6 +11,7 @@ const variationInput = $('#variation');
 const variationValue = $('#variationValue');
 const audio = $('#audioPlayer');
 const playButton = $('#playBtn');
+const seekBar = $('#seekBar');
 const libraryKey = 'toneara-library-v1';
 let objectUrl = null;
 let activeController = null;
@@ -122,6 +123,7 @@ async function generate(save = true) {
   $('#emptyState').classList.add('hidden');
   $('#playerState').classList.add('hidden');
   $('#progressState').classList.remove('hidden');
+  $('#resultCard').setAttribute('aria-busy', 'true');
   $('#generateBtn').disabled = true;
   $('#generateText').textContent = 'Generating…';
   $('#statusText').textContent = 'Building your track';
@@ -146,6 +148,7 @@ async function generate(save = true) {
     $('#emptyState h3').textContent = 'Generation failed';
     $('#emptyState p').textContent = error.message;
     $('#statusText').textContent = 'Try again';
+    $('#resultCard').setAttribute('aria-busy', 'false');
     $('#generateBtn').disabled = false;
     $('#generateText').textContent = 'Generate track';
     return;
@@ -165,6 +168,7 @@ async function generate(save = true) {
   drawWave(samples);
   $('#progressState').classList.add('hidden');
   $('#playerState').classList.remove('hidden');
+  $('#resultCard').setAttribute('aria-busy', 'false');
   $('#statusText').textContent = `Ready to play · ${result.provider} provider`;
   $('#generateBtn').disabled = false;
   $('#generateText').textContent = 'Generate track';
@@ -178,18 +182,15 @@ $('#regenerateBtn').addEventListener('click', () => {
   generate();
 });
 playButton.addEventListener('click', () => { if (audio.paused) audio.play(); else audio.pause(); });
-audio.addEventListener('play', () => { playButton.textContent = '❚❚'; });
-audio.addEventListener('pause', () => { playButton.textContent = '▶'; });
-audio.addEventListener('ended', () => { playButton.textContent = '▶'; });
+audio.addEventListener('play', () => { playButton.textContent = '❚❚'; playButton.setAttribute('aria-label', 'Pause track'); });
+audio.addEventListener('pause', () => { playButton.textContent = '▶'; playButton.setAttribute('aria-label', 'Play track'); });
+audio.addEventListener('ended', () => { playButton.textContent = '▶'; playButton.setAttribute('aria-label', 'Play track'); });
 audio.addEventListener('timeupdate', () => {
   $('#currentTime').textContent = formatTime(audio.currentTime);
-  $('#scrubBar').style.width = `${audio.duration ? (audio.currentTime / audio.duration) * 100 : 0}%`;
+  seekBar.value = audio.duration ? Math.round((audio.currentTime / audio.duration) * 1000) : 0;
+  seekBar.setAttribute('aria-valuetext', `${formatTime(audio.currentTime)} of ${formatTime(audio.duration || 0)}`);
 });
-$('.scrub').addEventListener('click', (event) => {
-  if (!audio.duration) return;
-  const bounds = event.currentTarget.getBoundingClientRect();
-  audio.currentTime = ((event.clientX - bounds.left) / bounds.width) * audio.duration;
-});
+seekBar.addEventListener('input', () => { if (audio.duration) audio.currentTime = (Number(seekBar.value) / 1000) * audio.duration; });
 $('#trackList').addEventListener('click', (event) => {
   const items = getLibrary();
   const play = event.target.closest('[data-play]');

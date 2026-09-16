@@ -8,4 +8,7 @@ for (const reference of ['./styles.css', './app.js', './assets/toneara-logo.png'
   if (!html.includes(reference)) throw new Error(`Missing HTML reference: ${reference}`);
 }
 if (!html.includes('Toneara Studio')) throw new Error('Product title is missing.');
+for (const accessibilityHook of ['aria-live="polite"', 'aria-busy="false"', 'aria-label="Track position"']) {
+  if (!html.includes(accessibilityHook)) throw new Error(`Missing accessibility hook: ${accessibilityHook}`);
+}
 console.log('Repository validation passed.');

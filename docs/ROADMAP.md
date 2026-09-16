@@ -21,7 +21,8 @@
 - Longer arrangements and section controls
 - Project files and durable user-owned storage
 - MP3 plus WAV export
-- Accessible keyboard controls and richer waveform navigation
+- [x] Keyboard-accessible playback and track-position controls
+- Richer waveform navigation and screen-reader descriptions
 
 ## v1.0 Release candidate
 

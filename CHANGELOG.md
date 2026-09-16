@@ -11,6 +11,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/) and s
 - Primary-provider failure fallback to the local music engine
 - Request validation and provider lifecycle tests
 - Architecture decision record for future hosted music providers
+- Keyboard-accessible seeking, accurate playback labels, focus indicators, and live busy state
 
 ## [0.1.0-beta.1] - 2026-09-16
 
