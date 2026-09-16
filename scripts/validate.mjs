@@ -1,6 +1,6 @@
 import { access, readFile } from 'node:fs/promises';
 
-const required = ['app/index.html', 'app/app.js', 'app/music-engine.mjs', 'app/styles.css', 'app/assets/toneara-logo.png'];
+const required = ['app/index.html', 'app/app.js', 'app/generation-service.mjs', 'app/music-engine.mjs', 'app/styles.css', 'app/assets/toneara-logo.png'];
 for (const file of required) await access(file);
 
 const html = await readFile('app/index.html', 'utf8');

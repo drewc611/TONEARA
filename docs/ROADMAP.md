@@ -10,10 +10,10 @@
 
 ## v0.2 Provider-ready
 
-- Provider-neutral generation API contract
-- Queued, processing, completed, and failed states
+- [x] Provider-neutral generation API contract
+- [x] Queued, processing, completed, failed, and cancelled states
+- [x] Automatic fallback to the local provider
 - Server-side secret handling and rate limits
-- Provider fallback to the local engine
 - Generation latency and failure instrumentation without prompt collection
 
 ## v0.3 Creator workflow

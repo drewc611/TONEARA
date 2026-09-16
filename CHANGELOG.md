@@ -2,6 +2,16 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/) and semantic versioning.
 
+## [0.1.0-beta.2] - 2026-09-16
+
+### Added
+
+- Provider-neutral generation request and result contract
+- Queued, processing, completed, failed, and cancelled job states
+- Primary-provider failure fallback to the local music engine
+- Request validation and provider lifecycle tests
+- Architecture decision record for future hosted music providers
+
 ## [0.1.0-beta.1] - 2026-09-16
 
 ### Added
