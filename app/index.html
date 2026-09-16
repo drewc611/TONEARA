@@ -134,8 +134,14 @@
     <section class="library-section" aria-labelledby="libraryTitle">
       <div class="library-heading">
         <div><p class="eyebrow">YOUR WORK</p><h2 id="libraryTitle">Recent tracks</h2></div>
-        <button type="button" class="text-button" id="clearLibraryBtn" hidden>Clear all</button>
+        <div class="library-actions">
+          <button type="button" class="text-button" id="importProjectBtn">Import project</button>
+          <button type="button" class="text-button" id="exportProjectBtn">Export project</button>
+          <button type="button" class="text-button" id="clearLibraryBtn" hidden>Clear all</button>
+          <input id="projectFileInput" type="file" accept="application/json,.json" hidden />
+        </div>
       </div>
+      <p class="library-status" id="libraryStatus" role="status" aria-live="polite"></p>
       <div class="library-empty" id="libraryEmpty">Generate a track and it will be saved here on this device.</div>
       <div class="track-list" id="trackList"></div>
     </section>
