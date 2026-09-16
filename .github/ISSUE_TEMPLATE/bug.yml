@@ -1,0 +1,24 @@
+name: Bug report
+description: Report reproducible incorrect behavior
+title: "[Bug]: "
+labels: [bug, triage]
+body:
+  - type: textarea
+    id: problem
+    attributes: { label: Problem, description: What happened? }
+    validations: { required: true }
+  - type: textarea
+    id: reproduce
+    attributes: { label: Reproduction, description: Provide exact steps and settings. }
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes: { label: Expected behavior }
+    validations: { required: true }
+  - type: input
+    id: environment
+    attributes: { label: Environment, description: Browser, version, operating system, and device. }
+    validations: { required: true }
+  - type: textarea
+    id: evidence
+    attributes: { label: Evidence, description: Add screenshots, console output, or a sample brief without private data. }

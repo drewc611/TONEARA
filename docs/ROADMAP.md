@@ -1,0 +1,33 @@
+# Roadmap
+
+## v0.1 Beta. Complete
+
+- End-to-end prompt-to-WAV flow
+- Four genres and moods
+- Twelve deterministic variations
+- Local track library and remix workflow
+- Responsive UI, tests, security scanning, and release automation
+
+## v0.2 Provider-ready
+
+- Provider-neutral generation API contract
+- Queued, processing, completed, and failed states
+- Server-side secret handling and rate limits
+- Provider fallback to the local engine
+- Generation latency and failure instrumentation without prompt collection
+
+## v0.3 Creator workflow
+
+- Longer arrangements and section controls
+- Project files and durable user-owned storage
+- MP3 plus WAV export
+- Accessible keyboard controls and richer waveform navigation
+
+## v1.0 Release candidate
+
+- Accounts, usage limits, billing, rights disclosures, and deletion controls
+- Cross-device library
+- Production observability and incident response
+- Browser and mobile release qualification
+
+Roadmap items are directional. An approved issue and architecture decision are required before implementation.

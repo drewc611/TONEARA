@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm run verify
+      - name: Package
+        run: cd dist && zip -r ../toneara-${GITHUB_REF_NAME}.zip .
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          FLAGS=""
+          case "$GITHUB_REF_NAME" in *-*) FLAGS="--prerelease" ;; esac
+          gh release create "$GITHUB_REF_NAME" "toneara-${GITHUB_REF_NAME}.zip" --generate-notes $FLAGS

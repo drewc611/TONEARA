@@ -1,0 +1,26 @@
+name: Feature proposal
+description: Propose a bounded product improvement
+title: "[Feature]: "
+labels: [enhancement, triage]
+body:
+  - type: textarea
+    id: need
+    attributes: { label: User need, description: Who needs this and what are they trying to accomplish? }
+    validations: { required: true }
+  - type: textarea
+    id: outcome
+    attributes: { label: Desired outcome, description: Describe the result without prescribing unnecessary implementation. }
+    validations: { required: true }
+  - type: textarea
+    id: acceptance
+    attributes: { label: Acceptance criteria, description: List observable completion criteria. }
+    validations: { required: true }
+  - type: textarea
+    id: non_goals
+    attributes: { label: Non-goals }
+  - type: checkboxes
+    id: boundary
+    attributes:
+      label: Boundary review
+      options:
+        - label: This proposal does not add accounts, payments, uploads, telemetry, external providers, or new data collection.

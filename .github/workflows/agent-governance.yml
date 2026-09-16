@@ -1,0 +1,29 @@
+name: Agent governance
+
+on:
+  pull_request:
+    paths:
+      - '.github/agents/**'
+      - '.github/copilot-instructions.md'
+      - 'docs/AGENT_OPERATING_MODEL.md'
+
+permissions:
+  contents: read
+
+jobs:
+  guardrails:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate agent boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f docs/AGENT_OPERATING_MODEL.md
+          test -f .github/copilot-instructions.md
+          count=$(find .github/agents -name '*.agent.md' | wc -l)
+          test "$count" -ge 7
+          for file in .github/agents/*.agent.md; do
+            grep -q '^description:' "$file"
+            grep -qiE 'never|may not|do not' "$file"
+          done
