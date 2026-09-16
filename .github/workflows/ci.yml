@@ -23,7 +23,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm run verify
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: toneara-beta
           path: dist
