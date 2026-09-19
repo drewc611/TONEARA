@@ -1,5 +1,6 @@
 import { createGenerationService, createLocalProvider, JOB_STATUS } from './generation-service.mjs';
 import { formatTime } from './music-engine.mjs';
+import { parseProject, serializeProject } from './project-file.mjs';
 
 const $ = (selector) => document.querySelector(selector);
 const form = $('#musicForm');
@@ -13,6 +14,7 @@ const audio = $('#audioPlayer');
 const playButton = $('#playBtn');
 const seekBar = $('#seekBar');
 const libraryKey = 'toneara-library-v1';
+const libraryLimit = 100;
 let objectUrl = null;
 let activeController = null;
 const generationService = createGenerationService({ primary: createLocalProvider() });
@@ -47,7 +49,13 @@ function getLibrary() {
 }
 
 function saveLibrary(items) {
-  localStorage.setItem(libraryKey, JSON.stringify(items.slice(0, 8)));
+  localStorage.setItem(libraryKey, JSON.stringify(items.slice(0, libraryLimit)));
+}
+
+function setLibraryStatus(message, isError = false) {
+  const status = $('#libraryStatus');
+  status.textContent = message;
+  status.classList.toggle('error', isError);
 }
 
 function renderLibrary() {
@@ -201,4 +209,34 @@ $('#trackList').addEventListener('click', (event) => {
   if (remove) { items.splice(Number(remove.dataset.delete), 1); saveLibrary(items); renderLibrary(); }
 });
 $('#clearLibraryBtn').addEventListener('click', () => { saveLibrary([]); renderLibrary(); });
+$('#exportProjectBtn').addEventListener('click', () => {
+  const items = getLibrary();
+  if (!items.length) return setLibraryStatus('Generate or import a track before exporting.', true);
+  const blob = new Blob([serializeProject(items)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `toneara-project-${new Date().toISOString().slice(0, 10)}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+  setLibraryStatus(`Exported ${items.length} track${items.length === 1 ? '' : 's'}.`);
+});
+$('#importProjectBtn').addEventListener('click', () => $('#projectFileInput').click());
+$('#projectFileInput').addEventListener('change', async (event) => {
+  const [file] = event.target.files;
+  event.target.value = '';
+  if (!file) return;
+  if (file.size > 1_000_000) return setLibraryStatus('Project files must be smaller than 1 MB.', true);
+  try {
+    const imported = parseProject(await file.text()).tracks;
+    const current = getLibrary();
+    const merged = [...imported, ...current].filter((track, index, all) =>
+      index === all.findIndex((candidate) => candidate.prompt === track.prompt && candidate.variation === track.variation));
+    saveLibrary(merged);
+    renderLibrary();
+    setLibraryStatus(`Imported ${imported.length} track${imported.length === 1 ? '' : 's'}.`);
+  } catch (error) {
+    setLibraryStatus(error.message || 'Toneara could not import this project.', true);
+  }
+});
 renderLibrary();

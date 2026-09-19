@@ -19,6 +19,7 @@ flowchart LR
 - `app/app.js`: interface state and browser integrations
 - `app/generation-service.mjs`: request validation, job lifecycle, provider selection, cancellation, and fallback
 - `app/music-engine.mjs`: deterministic generation and WAV encoding
+- `app/project-file.mjs`: versioned, validated project portability contract
 - `app/styles.css`: responsive design system
 - `test/`: engine contract tests
 - `scripts/`: dependency-free build and validation

@@ -2,6 +2,15 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/) and semantic versioning.
 
+## [0.1.0-beta.3] - 2026-09-16
+
+### Added
+
+- Versioned Toneara project files for portable JSON export and import
+- Strict project and track validation with safe unknown-field removal
+- Duplicate prevention, 1 MB import limit, and clear import status messages
+- Project-file round-trip and invalid-input tests
+
 ## [0.1.0-beta.2] - 2026-09-16
 
 ### Added

@@ -19,7 +19,8 @@
 ## v0.3 Creator workflow
 
 - Longer arrangements and section controls
-- Project files and durable user-owned storage
+- [x] Portable, validated project-file export and import
+- Durable cross-device user-owned storage
 - MP3 plus WAV export
 - [x] Keyboard-accessible playback and track-position controls
 - Richer waveform navigation and screen-reader descriptions
