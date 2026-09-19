@@ -4,7 +4,7 @@
   <p><strong>Make the music you imagine.</strong></p>
   <p>A browser-first AI-assisted studio for creating, remixing, previewing, and exporting original instrumentals.</p>
 
-  [![Beta](https://img.shields.io/badge/status-beta-ff9f1c?style=for-the-badge)](https://github.com/drewc611/TONEARA/releases)
+  [![Release candidate](https://img.shields.io/badge/status-release%20candidate-ff9f1c?style=for-the-badge)](https://github.com/drewc611/TONEARA/releases)
   [![CI](https://img.shields.io/github/actions/workflow/status/drewc611/TONEARA/ci.yml?branch=main&style=for-the-badge&label=CI)](https://github.com/drewc611/TONEARA/actions/workflows/ci.yml)
   [![CodeQL](https://img.shields.io/github/actions/workflow/status/drewc611/TONEARA/codeql.yml?branch=main&style=for-the-badge&label=CodeQL)](https://github.com/drewc611/TONEARA/actions/workflows/codeql.yml)
   [![License](https://img.shields.io/badge/license-proprietary-f5f2ea?style=for-the-badge)](LICENSE)
@@ -16,9 +16,9 @@
 
 Describe a sound, choose a genre and mood, set the tempo, and generate a playable instrumental directly in the browser. Toneara renders a waveform, supports seeking and remix variations, remembers recent settings on the device, and exports a WAV file.
 
-The current beta needs no account, API key, backend, or paid generation provider. Prompts and track settings stay in the browser.
+The release candidate needs no account, API key, backend, or paid generation provider. Prompts and track settings stay in the browser.
 
-## Beta features
+## Release-candidate features
 
 - Prompt-to-instrumental generation
 - Electronic, hip-hop, ambient, and cinematic palettes
@@ -27,6 +27,9 @@ The current beta needs no account, API key, backend, or paid generation provider
 - Twelve deterministic variations per brief
 - Waveform, playback, seeking, regeneration, and WAV export
 - Device-local recent-track library
+- Portable, validated Toneara project import and export
+- Installable progressive web application with offline startup
+- Strict browser content security policy with no third-party runtime requests
 - Responsive desktop and mobile interface
 
 ## How it works
@@ -67,7 +70,7 @@ Open `http://localhost:4173`.
 
 ## Product direction
 
-The local engine proves the complete experience. The next architecture increment introduces a provider-neutral generation API while preserving local fallback and keeping provider keys off the client.
+The local engine and provider-neutral job contract deliver the complete credential-free experience. A later hosted-provider adapter can use the same contract while keeping provider keys off the client.
 
 See the [product requirements](docs/PRODUCT_REQUIREMENTS.md), [architecture](docs/ARCHITECTURE.md), [roadmap](docs/ROADMAP.md), and [AI team operating model](docs/AGENT_OPERATING_MODEL.md).
 
