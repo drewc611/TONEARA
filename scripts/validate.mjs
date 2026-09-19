@@ -7,7 +7,8 @@ const html = await readFile('app/index.html', 'utf8');
 for (const reference of ['./styles.css', './app.js', './manifest.webmanifest', './assets/toneara-logo.png']) {
   if (!html.includes(reference)) throw new Error(`Missing HTML reference: ${reference}`);
 }
-if (html.includes('fonts.googleapis.com') || html.includes('fonts.gstatic.com')) throw new Error('Release build must not request third-party fonts.');
+const externalResource = /<(?:audio|img|link|script|source)\b[^>]*(?:href|src)\s*=\s*["']https?:\/\//i;
+if (externalResource.test(html)) throw new Error('Release build must not request third-party resources.');
 if (!html.includes('Content-Security-Policy')) throw new Error('Content Security Policy is missing.');
 if (!html.includes('Toneara Studio')) throw new Error('Product title is missing.');
 for (const accessibilityHook of ['aria-live="polite"', 'aria-busy="false"', 'aria-label="Track position"']) {
