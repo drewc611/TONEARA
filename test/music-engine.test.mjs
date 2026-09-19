@@ -12,6 +12,18 @@ test('variations produce different output', () => {
   assert.notDeepEqual(createSamples(base), createSamples({ ...base, variation: 2 }));
 });
 
+test('arrangement structures produce different audio shapes', () => {
+  assert.notDeepEqual(createSamples({ ...base, structure: 'loop' }), createSamples({ ...base, structure: 'build' }));
+  assert.notDeepEqual(createSamples({ ...base, structure: 'build' }), createSamples({ ...base, structure: 'versechorus' }));
+});
+
+test('intense energy produces a stronger signal than gentle energy', () => {
+  const averagePower = (samples) => samples.reduce((total, sample) => total + sample ** 2, 0) / samples.length;
+  const gentle = averagePower(createSamples({ ...base, energy: 'gentle' }));
+  const intense = averagePower(createSamples({ ...base, energy: 'intense' }));
+  assert.ok(intense > gentle);
+});
+
 test('sample duration and WAV header are valid', async () => {
   const samples = createSamples(base);
   assert.equal(samples.length, SAMPLE_RATE);

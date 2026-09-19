@@ -10,6 +10,8 @@ export const JOB_STATUS = Object.freeze({
 
 const ALLOWED_GENRES = new Set(['electronic', 'hiphop', 'ambient', 'cinematic']);
 const ALLOWED_MOODS = new Set(['focused', 'uplifting', 'dark', 'dreamy']);
+const ALLOWED_STRUCTURES = new Set(['loop', 'build', 'versechorus']);
+const ALLOWED_ENERGY = new Set(['gentle', 'balanced', 'intense']);
 
 export class GenerationError extends Error {
   constructor(message, code = 'generation_failed', options = {}) {
@@ -28,6 +30,8 @@ export function createGenerationRequest(input) {
     bpm: Number(input.bpm),
     seconds: Number(input.seconds),
     variation: Number(input.variation),
+    structure: String(input.structure || 'loop'),
+    energy: String(input.energy || 'balanced'),
   };
 
   if (!request.prompt || request.prompt.length > 180) throw new GenerationError('Enter a prompt of 180 characters or fewer.', 'invalid_prompt');
@@ -36,6 +40,8 @@ export function createGenerationRequest(input) {
   if (!Number.isInteger(request.bpm) || request.bpm < 68 || request.bpm > 144) throw new GenerationError('Tempo must be between 68 and 144 BPM.', 'invalid_bpm');
   if (![10, 20, 30].includes(request.seconds)) throw new GenerationError('Length must be 10, 20, or 30 seconds.', 'invalid_duration');
   if (!Number.isInteger(request.variation) || request.variation < 1 || request.variation > 12) throw new GenerationError('Variation must be between 1 and 12.', 'invalid_variation');
+  if (!ALLOWED_STRUCTURES.has(request.structure)) throw new GenerationError('Choose a supported arrangement.', 'invalid_structure');
+  if (!ALLOWED_ENERGY.has(request.energy)) throw new GenerationError('Choose a supported energy level.', 'invalid_energy');
   return Object.freeze(request);
 }
 

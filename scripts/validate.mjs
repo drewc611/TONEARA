@@ -17,4 +17,7 @@ for (const accessibilityHook of ['aria-live="polite"', 'aria-busy="false"', 'ari
 for (const projectControl of ['id="importProjectBtn"', 'id="exportProjectBtn"', 'id="projectFileInput"']) {
   if (!html.includes(projectControl)) throw new Error(`Missing project control: ${projectControl}`);
 }
+for (const arrangementControl of ['id="structure"', 'id="energy"']) {
+  if (!html.includes(arrangementControl)) throw new Error(`Missing arrangement control: ${arrangementControl}`);
+}
 console.log('Repository validation passed.');

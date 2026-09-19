@@ -14,6 +14,13 @@ test('generation requests are normalized and immutable', () => {
   const normalized = createGenerationRequest({ ...request, prompt: '  warm city drive  ' });
   assert.equal(normalized.prompt, 'warm city drive');
   assert.equal(Object.isFrozen(normalized), true);
+  assert.equal(normalized.structure, 'loop');
+  assert.equal(normalized.energy, 'balanced');
+});
+
+test('unsupported arrangement controls are rejected', () => {
+  assert.throws(() => createGenerationRequest({ ...request, structure: 'random-sections' }), (error) => error.code === 'invalid_structure');
+  assert.throws(() => createGenerationRequest({ ...request, energy: 'maximum' }), (error) => error.code === 'invalid_energy');
 });
 
 test('invalid requests fail before a provider is called', async () => {

@@ -24,6 +24,8 @@ The release candidate needs no account, API key, backend, or paid generation pro
 - Electronic, hip-hop, ambient, and cinematic palettes
 - Focused, uplifting, dark, and dreamy moods
 - Tempo and 10, 20, or 30-second duration controls
+- Steady loop, rising build, and verse-and-chorus arrangements
+- Gentle, balanced, and intense energy shaping
 - Twelve deterministic variations per brief
 - Waveform, playback, seeking, regeneration, and WAV export
 - Device-local recent-track library

@@ -91,6 +91,25 @@
           </div>
         </div>
 
+        <div class="field-row">
+          <div class="field">
+            <label for="structure">Arrangement</label>
+            <select id="structure">
+              <option value="loop">Steady loop</option>
+              <option value="build">Rising build</option>
+              <option value="versechorus">Verse and chorus</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="energy">Energy</label>
+            <select id="energy">
+              <option value="gentle">Gentle</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="intense">Intense</option>
+            </select>
+          </div>
+        </div>
+
         <button class="generate" type="submit" id="generateBtn">
           <span class="spark">✦</span><span id="generateText">Generate track</span>
         </button>
