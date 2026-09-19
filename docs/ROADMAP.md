@@ -18,7 +18,8 @@
 
 ## v0.3 Creator workflow
 
-- Longer arrangements and section controls
+- [x] Arrangement structure and energy-shape controls
+- Longer arrangements with editable section timing
 - [x] Portable, validated project-file export and import
 - Durable cross-device user-owned storage
 - MP3 plus WAV export

@@ -2,6 +2,15 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/) and semantic versioning.
 
+## [0.2.0-beta.1] - 2026-09-19
+
+### Added
+
+- Steady loop, rising build, and verse-and-chorus arrangement controls
+- Gentle, balanced, and intense energy shaping
+- Backward-compatible arrangement defaults for existing tracks and project files
+- Deterministic structure, energy, and validation tests
+
 ## [0.1.0-rc.1] - 2026-09-19
 
 ### Added

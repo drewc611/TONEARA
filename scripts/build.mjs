@@ -3,4 +3,4 @@ import { cp, mkdir, rm } from 'node:fs/promises';
 await rm('dist', { recursive: true, force: true });
 await mkdir('dist', { recursive: true });
 await cp('app', 'dist', { recursive: true });
-console.log('Toneara release candidate built in dist/.');
+console.log('Toneara production bundle built in dist/.');

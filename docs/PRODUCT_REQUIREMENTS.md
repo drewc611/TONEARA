@@ -13,11 +13,12 @@ Toneara lets a person describe a musical idea and turn it into an original, play
 ## Beta requirements
 
 1. A first-time user can generate and play a track without instructions.
-2. The brief supports prompt, genre, mood, tempo, length, name, and variation.
+2. The brief supports prompt, genre, mood, tempo, length, name, variation, arrangement, and energy.
 3. Identical settings produce identical output.
 4. A user can seek, replay, remix, reopen settings, remove history, and download WAV.
 5. Prompts and track settings stay on the device.
 6. Mobile and desktop layouts remain usable at 200% text zoom.
+7. Arrangement choices remain attached to saved tracks and portable project files.
 
 ## Out of scope for v0.1
 
