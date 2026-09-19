@@ -18,6 +18,29 @@ const libraryLimit = 100;
 let objectUrl = null;
 let activeController = null;
 const generationService = createGenerationService({ primary: createLocalProvider() });
+let installPrompt = null;
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  installPrompt = event;
+  $('#installBtn').hidden = false;
+});
+
+window.addEventListener('appinstalled', () => {
+  installPrompt = null;
+  $('#installBtn').hidden = true;
+});
+
+$('#installBtn').addEventListener('click', async () => {
+  if (!installPrompt) return;
+  await installPrompt.prompt();
+  installPrompt = null;
+  $('#installBtn').hidden = true;
+});
 
 promptInput.addEventListener('input', () => {
   characterCount.textContent = `${promptInput.value.length} / 180`;

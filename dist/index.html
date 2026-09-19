@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Create, remix, preview, and export original music from a simple creative brief with Toneara." />
+  <meta name="theme-color" content="#090a0c" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; media-src 'self' blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; worker-src 'self'; manifest-src 'self'" />
   <title>Toneara Studio</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23090a0c'/%3E%3Cpath d='M15 38V26m9 20V18m9 23V23m9 29V12m9 31V21' stroke='%23ffb23e' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" href="./assets/toneara-icon-192.png" />
+  <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -17,7 +18,10 @@
       <img src="./assets/toneara-logo.png" alt="" width="34" height="34" />
       <span>Toneara</span>
     </a>
-    <div class="engine-pill"><span></span> Beta · Local studio engine</div>
+    <div class="top-actions">
+      <button type="button" class="install-button" id="installBtn" hidden>Install app</button>
+      <div class="engine-pill"><span></span> Release candidate · Local studio engine</div>
+    </div>
   </header>
 
   <main>
@@ -147,7 +151,7 @@
     </section>
   </main>
 
-  <footer><span>Toneara Studio · Beta</span><span>Original instrumentals generated locally</span></footer>
+  <footer><span>Toneara Studio · Release candidate</span><span>Original instrumentals generated locally</span></footer>
   <audio id="audioPlayer"></audio>
   <script type="module" src="./app.js"></script>
 </body>

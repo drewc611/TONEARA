@@ -2,6 +2,22 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/) and semantic versioning.
 
+## [0.1.0-rc.1] - 2026-09-19
+
+### Added
+
+- Installable progressive web application manifest and install prompt
+- Offline application shell and module caching
+- Automated PWA manifest and service-worker validation
+- Release-readiness checklist
+
+### Changed
+
+- Removed third-party font requests for a private, self-contained runtime
+- Added a strict browser Content Security Policy
+- Updated CI, CodeQL, Pages, and artifact actions to current supported major versions
+- Moved GitHub-hosted build jobs to Node.js 24
+
 ## [0.1.0-beta.3] - 2026-09-16
 
 ### Added
