@@ -15,7 +15,7 @@ test('web manifest defines an installable standalone application', () => {
 });
 
 test('service worker pre-caches every critical application module', () => {
-  for (const asset of ['index.html', 'app.js', 'generation-service.mjs', 'music-engine.mjs', 'project-file.mjs', 'manifest.webmanifest']) {
+  for (const asset of ['index.html', 'app.js', 'generation-service.mjs', 'music-engine.mjs', 'project-file.mjs', 'track-library.mjs', 'manifest.webmanifest']) {
     assert.match(serviceWorker, new RegExp(asset.replace('.', '\\.')));
   }
 });

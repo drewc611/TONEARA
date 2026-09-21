@@ -2,6 +2,8 @@ import { createGenerationService, createLocalProvider, JOB_STATUS } from './gene
 import { formatTime } from './music-engine.mjs';
 import { parseProject, serializeProject } from './project-file.mjs';
 
+import { mergeTracks } from './track-library.mjs';
+
 const $ = (selector) => document.querySelector(selector);
 const form = $('#musicForm');
 const promptInput = $('#prompt');
@@ -101,7 +103,7 @@ function renderLibrary() {
 function saveCurrent(options) {
   const items = getLibrary();
   const item = { ...options, name: options.name || titleFrom(options.prompt), createdAt: Date.now() };
-  saveLibrary([item, ...items.filter((track) => !(track.prompt === item.prompt && track.variation === item.variation))]);
+  saveLibrary(mergeTracks([item], items, libraryLimit));
   renderLibrary();
 }
 
@@ -258,8 +260,7 @@ $('#projectFileInput').addEventListener('change', async (event) => {
   try {
     const imported = parseProject(await file.text()).tracks;
     const current = getLibrary();
-    const merged = [...imported, ...current].filter((track, index, all) =>
-      index === all.findIndex((candidate) => candidate.prompt === track.prompt && candidate.variation === track.variation));
+    const merged = mergeTracks(imported, current, libraryLimit);
     saveLibrary(merged);
     renderLibrary();
     setLibraryStatus(`Imported ${imported.length} track${imported.length === 1 ? '' : 's'}.`);
