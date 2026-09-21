@@ -25,10 +25,14 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with: { node-version: 24, cache: npm }
       - run: npm run verify
-      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
-        with: { enablement: true }
+      # No actions/configure-pages step: it exists to hand a base URL to static
+      # site generators, and every path in app/ is relative ('./…', manifest
+      # scope './'), so the app works unchanged at any subpath. Its enablement
+      # mode also cannot work here — creating a Pages site needs repository
+      # admin, which GITHUB_TOKEN does not have, so it failed on every run.
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with: { path: dist }
+
   deploy:
     environment:
       name: github-pages
@@ -40,6 +44,42 @@ jobs:
       pages: write
       id-token: write
     steps:
+      # Deploying to a repository that has never had Pages turned on fails with
+      # a 404 that reads like a build problem. Name the real cause instead.
+      - name: Check that Pages is enabled
+        id: preflight
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -uo pipefail
+          status=$(curl -sS -o /dev/null -w '%{http_code}' \
+            -H "authorization: Bearer ${GH_TOKEN}" \
+            -H "accept: application/vnd.github+json" \
+            -H "x-github-api-version: 2022-11-28" \
+            "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/pages" || echo 000)
+          if [ "$status" = "200" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "### The demo was built but not published"
+              echo
+              echo "GitHub Pages is not enabled for this repository, so there is"
+              echo "nothing to deploy to (the Pages API returned HTTP \`${status}\`)."
+              echo
+              echo "An owner enables it once at"
+              echo "<https://github.com/${GITHUB_REPOSITORY}/settings/pages>,"
+              echo "choosing **GitHub Actions** as the source. A workflow token"
+              echo "cannot do this: creating a Pages site requires repository admin."
+              echo
+              echo "The built site is attached to this run as an artifact, and the"
+              echo "next push to \`main\` publishes it automatically."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning title=Pages not enabled::Enable GitHub Pages (source: GitHub Actions) to publish the demo."
+          fi
+
       - name: Deploy
         id: deployment
+        if: steps.preflight.outputs.enabled == 'true'
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

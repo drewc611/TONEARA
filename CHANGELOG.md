@@ -14,7 +14,9 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/) and s
 - Server-side hosted-provider adapter with per-request timeouts and bounded, jittered retries
 - Fixed-window rate limiter and generation instrumentation that cannot carry prompt content
 - Dependency review and supply-chain scorecard workflows, with a preflight that reports dependency review as inert rather than failing when the dependency graph is off
-- Browser and device support matrix, security operations runbook, and ADR-003
+- Browser and device support matrix, security operations runbook, discoverability runbook, and ADR-003
+- Canonical URL, Open Graph and Twitter metadata, JSON-LD application description, and a sitemap for the hosted demo
+- README documentation of the synthesis engine, determinism guarantee, on-device data handling, and project file format
 
 ### Changed
 
@@ -27,6 +29,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/) and s
 
 ### Fixed
 
+- The `Deploy demo` workflow failed on every run on `main`. It called `actions/configure-pages` with `enablement: true`, which cannot create a Pages site because that needs repository admin rather than a workflow token. The step is removed: it supplies a base URL to static site generators, and every path in the app is already relative. Deployment now reports plainly when Pages is not yet enabled instead of failing.
 - Stale, incomplete `dist/` build output removed from version control
 - Offline navigation no longer fails when the cached shell is missing
 - Library actions no longer act on out-of-range indices

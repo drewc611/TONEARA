@@ -30,7 +30,7 @@ These cannot be set from a pull request. Each one needs a visit to repository se
 - [ ] **Secret scanning and push protection** — blocks a credential from reaching history in the first place. Same page as above.
 - [ ] **Restrict `GITHUB_TOKEN` default permissions to read-only** — workflows already declare what they need. <https://github.com/drewc611/TONEARA/settings/actions>
 - [ ] **Require approval for all outside-collaborator workflow runs** — same page as above.
-- [ ] **GitHub Pages source set to GitHub Actions** — a release-readiness gate. <https://github.com/drewc611/TONEARA/settings/pages>
+- [ ] **GitHub Pages source set to GitHub Actions** — a release-readiness gate, and the reason every `Deploy demo` run failed before the workflow was fixed. A workflow token cannot create a Pages site; it needs repository admin. <https://github.com/drewc611/TONEARA/settings/pages>
 - [ ] **Tag protection for `v*`** — releases build from tags, so the tag is the release. <https://github.com/drewc611/TONEARA/settings/tag_protection>
 
 ## Rotating a provider credential
