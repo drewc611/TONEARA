@@ -20,6 +20,23 @@ function tags(name = '[a-zA-Z][a-zA-Z0-9-]*') {
   return found;
 }
 
+/**
+ * Collects the characters that sit outside angle brackets, which is the visible
+ * text of a fragment. Written as a scan rather than a tag-stripping replace:
+ * that shape is an incomplete sanitizer, and it reads as one even where, as
+ * here, nothing untrusted is involved.
+ */
+function visibleText(markup) {
+  let depth = 0;
+  let text = '';
+  for (const character of markup) {
+    if (character === '<') depth += 1;
+    else if (character === '>') depth = Math.max(0, depth - 1);
+    else if (depth === 0) text += character;
+  }
+  return text.trim();
+}
+
 const identifiers = new Set(tags().map((node) => node.attributes.id).filter(Boolean));
 
 test('the page declares a language and a single top-level heading', () => {
@@ -55,7 +72,7 @@ test('every form control has an accessible name', () => {
 test('every button has a discernible name', () => {
   for (const match of html.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/g)) {
     const hasAria = /aria-label(ledby)?\s*=/.test(match[1]);
-    const text = match[2].replace(/<[^>]*>/g, '').trim();
+    const text = visibleText(match[2]);
     assert.ok(hasAria || text.length > 0, `button has no name: ${match[0].slice(0, 80)}`);
   }
 });
