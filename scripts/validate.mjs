@@ -9,7 +9,7 @@ const check = (condition, message) => { if (!condition) failures.push(message); 
 const required = [
   'app/index.html', 'app/app.js', 'app/generation-service.mjs', 'app/manifest.webmanifest',
   'app/music-engine.mjs', 'app/project-file.mjs', 'app/project-library.mjs',
-  'app/sw.js', 'app/styles.css', 'app/assets/toneara-icon-192.png', 'app/assets/toneara-logo.png',
+  'app/sitemap.xml', 'app/sw.js', 'app/styles.css', 'app/assets/toneara-icon-192.png', 'app/assets/toneara-logo.png',
 ];
 for (const file of required) {
   try {
@@ -23,8 +23,17 @@ const html = await readFile('app/index.html', 'utf8');
 for (const reference of ['./styles.css', './app.js', './manifest.webmanifest', './assets/toneara-logo.png']) {
   check(html.includes(reference), `Missing HTML reference: ${reference}`);
 }
-check(!/<(?:audio|img|link|script|source)\b[^>]*(?:href|src)\s*=\s*["']https?:\/\//i.test(html),
-  'Release build must not request third-party resources.');
+// Only flag elements the browser actually fetches. A canonical or alternate
+// link is metadata for crawlers and is never requested, so it is not a
+// third-party runtime resource.
+const FETCHING_LINK_RELS = /\b(?:stylesheet|icon|apple-touch-icon|manifest|preload|modulepreload|prefetch|preconnect|dns-prefetch)\b/i;
+for (const element of html.matchAll(/<(audio|img|link|script|source)\b([^>]*)>/gi)) {
+  const [, tag, attributes] = element;
+  if (!/(?:href|src)\s*=\s*["']https?:\/\//i.test(attributes)) continue;
+  const rel = attributes.match(/\brel\s*=\s*["']([^"']*)["']/i)?.[1] ?? '';
+  if (tag.toLowerCase() === 'link' && !FETCHING_LINK_RELS.test(rel)) continue;
+  failures.push(`Release build must not request third-party resources: ${element[0].slice(0, 80)}`);
+}
 check(html.includes('Content-Security-Policy'), 'Content Security Policy is missing.');
 check(html.includes('Toneara Studio'), 'Product title is missing.');
 check(!/\son[a-z]+\s*=\s*["']/i.test(html), 'Inline event handlers are not permitted under the Content Security Policy.');
@@ -34,6 +43,19 @@ for (const hook of ['aria-live="polite"', 'aria-busy="false"', 'aria-label="Trac
 }
 for (const control of ['id="importProjectBtn"', 'id="exportProjectBtn"', 'id="projectFileInput"']) {
   check(html.includes(control), `Missing project control: ${control}`);
+}
+
+// --- Discoverability ---
+
+const canonical = html.match(/<link\s+rel="canonical"\s+href="([^"]+)"/)?.[1];
+check(Boolean(canonical), 'A canonical URL is required so the hosted demo indexes as one page.');
+if (canonical) {
+  const sitemap = await readFile('app/sitemap.xml', 'utf8');
+  const location = sitemap.match(/<loc>([^<]+)<\/loc>/)?.[1];
+  check(location === canonical, `sitemap.xml lists ${location}, but the canonical URL is ${canonical}.`);
+  for (const property of ['og:url', 'og:title', 'og:description', 'og:image', 'twitter:card']) {
+    check(html.includes(`"${property}"`), `Missing social metadata: ${property}`);
+  }
 }
 
 // --- Supply chain ------------------------------------------------------------
