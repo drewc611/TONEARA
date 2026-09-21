@@ -12,4 +12,8 @@ Include affected version, reproduction steps, impact, and any suggested remediat
 
 ## Current posture
 
-Toneara runs generation in the browser, has no backend, collects no telemetry, and stores track settings only in local browser storage. Generated audio exists in browser memory until downloaded. Future hosted providers require a separate threat model and approved architecture decision.
+Toneara runs generation in the browser, has no backend, collects no telemetry, and stores track settings only in local browser storage. Generated audio exists in browser memory until downloaded.
+
+The `server/` directory holds a hosted-provider adapter that is not deployed and not reachable from the browser. It reads credentials from the process environment, never from repository secrets consumed by client code.
+
+Supply-chain controls, and the settings only the repository owner can enable, are listed in [docs/SECURITY_OPERATIONS.md](docs/SECURITY_OPERATIONS.md). Deploying a hosted provider requires a separate threat model and an approved architecture decision.
