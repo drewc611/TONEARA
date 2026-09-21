@@ -63,8 +63,9 @@ Open `http://localhost:4173`.
 |---|---|
 | `app/` | Shippable browser application |
 | `test/` | Deterministic engine tests |
+| `server/` | Server-side hosted-provider adapter, rate limiting, and instrumentation (not deployed) |
 | `scripts/` | Dependency-free validation and build |
-| `docs/` | Product, architecture, privacy, threat model, and roadmap |
+| `docs/` | Product, architecture, privacy, threat model, security operations, support matrix, and roadmap |
 | `.github/agents/` | Guarded GitHub Copilot custom-agent team |
 | `.github/workflows/` | CI, security, Pages, agent governance, and releases |
 
@@ -72,7 +73,7 @@ Open `http://localhost:4173`.
 
 The local engine and provider-neutral job contract deliver the complete credential-free experience. A later hosted-provider adapter can use the same contract while keeping provider keys off the client.
 
-See the [product requirements](docs/PRODUCT_REQUIREMENTS.md), [architecture](docs/ARCHITECTURE.md), [roadmap](docs/ROADMAP.md), and [AI team operating model](docs/AGENT_OPERATING_MODEL.md).
+See the [product requirements](docs/PRODUCT_REQUIREMENTS.md), [architecture](docs/ARCHITECTURE.md), [roadmap](docs/ROADMAP.md), [security operations](docs/SECURITY_OPERATIONS.md), [browser support](docs/BROWSER_SUPPORT.md), and [AI team operating model](docs/AGENT_OPERATING_MODEL.md).
 
 ## Ownership and license
 

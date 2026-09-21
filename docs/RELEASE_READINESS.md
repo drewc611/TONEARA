@@ -17,8 +17,9 @@
 - [x] Portable project import and export
 - [x] Keyboard-accessible primary playback controls
 - [x] Installable offline application shell
-- [ ] Manual Chrome, Edge, Firefox, and Safari qualification
-- [ ] Manual phone and tablet qualification
+- [x] Automated accessibility smoke test in CI
+- [ ] Manual Chrome, Edge, Firefox, and Safari qualification (see `docs/BROWSER_SUPPORT.md`)
+- [ ] Manual phone and tablet qualification (see `docs/BROWSER_SUPPORT.md`)
 
 ## Security and privacy gates
 
@@ -28,6 +29,11 @@
 - [x] Content Security Policy
 - [x] Strict project-import validation
 - [x] Privacy and threat-model documentation
+- [x] Every GitHub Action pinned to a commit SHA
+- [x] Least-privilege workflow and job permissions
+- [x] Dependency review on every pull request
+- [x] Build output removed from version control
+- [ ] Branch protection, private vulnerability reporting, secret scanning and push protection (owner settings, see `docs/SECURITY_OPERATIONS.md`)
 
 ## Owner-controlled release gates
 
