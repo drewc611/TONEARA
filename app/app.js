@@ -2,6 +2,8 @@ import { createGenerationService, createLocalProvider, JOB_STATUS } from './gene
 import { formatTime } from './music-engine.mjs';
 import { parseProject, serializeProject } from './project-file.mjs';
 
+import { mergeTracks } from './track-library.mjs';
+
 const $ = (selector) => document.querySelector(selector);
 const form = $('#musicForm');
 const promptInput = $('#prompt');
@@ -101,7 +103,7 @@ function renderLibrary() {
 function saveCurrent(options) {
   const items = getLibrary();
   const item = { ...options, name: options.name || titleFrom(options.prompt), createdAt: Date.now() };
-  saveLibrary([item, ...items.filter((track) => !(track.prompt === item.prompt && track.variation === item.variation))]);
+  saveLibrary(mergeTracks([item], items, libraryLimit));
   renderLibrary();
 }
 
@@ -114,6 +116,8 @@ function loadSettings(track) {
   tempoInput.value = track.bpm;
   tempoValue.textContent = `${track.bpm} BPM`;
   $('#duration').value = track.seconds;
+  $('#structure').value = track.structure || 'loop';
+  $('#energy').value = track.energy || 'balanced';
   variationInput.value = track.variation || 1;
   variationValue.textContent = String(track.variation || 1).padStart(2, '0');
   form.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -146,6 +150,8 @@ async function generate(save = true) {
     bpm: Number(tempoInput.value),
     seconds: Number($('#duration').value),
     variation: Number(variationInput.value),
+    structure: $('#structure').value,
+    energy: $('#energy').value,
   };
   if (!options.prompt) return promptInput.focus();
 
@@ -194,7 +200,8 @@ async function generate(save = true) {
   $('#trackTitle').textContent = options.name || titleFrom(options.prompt);
   $('#durationBadge').textContent = formatTime(options.seconds);
   $('#totalTime').textContent = formatTime(options.seconds);
-  $('#trackTags').innerHTML = [options.genre, options.mood, `${options.bpm} BPM`, `Variation ${options.variation}`]
+  const arrangementLabel = { loop: 'Steady loop', build: 'Rising build', versechorus: 'Verse and chorus' }[options.structure];
+  $('#trackTags').innerHTML = [options.genre, options.mood, options.energy, arrangementLabel, `${options.bpm} BPM`, `Variation ${options.variation}`]
     .map((value) => `<span>${value[0].toUpperCase() + value.slice(1)}</span>`).join('');
   drawWave(samples);
   $('#progressState').classList.add('hidden');
@@ -253,8 +260,7 @@ $('#projectFileInput').addEventListener('change', async (event) => {
   try {
     const imported = parseProject(await file.text()).tracks;
     const current = getLibrary();
-    const merged = [...imported, ...current].filter((track, index, all) =>
-      index === all.findIndex((candidate) => candidate.prompt === track.prompt && candidate.variation === track.variation));
+    const merged = mergeTracks(imported, current, libraryLimit);
     saveLibrary(merged);
     renderLibrary();
     setLibraryStatus(`Imported ${imported.length} track${imported.length === 1 ? '' : 's'}.`);
