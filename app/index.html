@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to main content</a>
   <header class="topbar">
     <a class="brand" href="#" aria-label="Toneara home">
       <img src="./assets/toneara-logo.png" alt="" width="34" height="34" />
@@ -24,7 +25,7 @@
     </div>
   </header>
 
-  <main>
+  <main id="main" tabindex="-1">
     <section class="intro">
       <p class="eyebrow">TONEARA AI MUSIC STUDIO</p>
       <h1>Describe the sound.<br><em>Hear it take shape.</em></h1>
@@ -121,11 +122,16 @@
             <div><span class="track-label">NEW GENERATION</span><h3 id="trackTitle">Untitled Session</h3></div>
             <span class="duration-badge" id="durationBadge">0:10</span>
           </div>
-          <canvas id="waveform" width="720" height="160" role="img" aria-label="Generated audio waveform"></canvas>
+          <canvas id="waveform" width="720" height="160" role="img" aria-label="Generated audio waveform" aria-describedby="waveformDescription"></canvas>
+          <p class="visually-hidden" id="waveformDescription">Generate a track to hear a description of its shape.</p>
           <div class="transport">
+            <button type="button" class="skip" id="skipBackBtn" aria-label="Skip back five seconds">↺ 5s</button>
             <button type="button" class="play" id="playBtn" aria-label="Play track">▶</button>
-            <div class="time"><span id="currentTime">0:00</span><input class="scrub" id="seekBar" type="range" min="0" max="1000" value="0" aria-label="Track position" /><span id="totalTime">0:10</span></div>
+            <button type="button" class="skip" id="skipForwardBtn" aria-label="Skip forward five seconds">5s ↻</button>
+            <div class="time"><span id="currentTime">0:00</span><input class="scrub" id="seekBar" type="range" min="0" max="1000" value="0" aria-label="Track position" aria-describedby="seekHint" /><span id="totalTime">0:10</span></div>
           </div>
+          <p class="visually-hidden" id="seekHint">Use the left and right arrow keys to move through the track, Home to return to the start, and End to jump to the finish.</p>
+          <ul class="section-markers" id="sectionMarkers" aria-label="Track sections"></ul>
           <div class="tags" id="trackTags"></div>
           <div class="result-actions">
             <button type="button" class="secondary" id="regenerateBtn">↻ Regenerate</button>
@@ -139,6 +145,12 @@
       <div class="library-heading">
         <div><p class="eyebrow">YOUR WORK</p><h2 id="libraryTitle">Recent tracks</h2></div>
         <div class="library-actions">
+          <label class="visually-hidden" for="projectSelect">Active project</label>
+          <select id="projectSelect"></select>
+          <button type="button" class="text-button" id="newProjectBtn">New project</button>
+          <button type="button" class="text-button" id="renameProjectBtn">Rename</button>
+          <button type="button" class="text-button" id="archiveProjectBtn">Archive</button>
+          <button type="button" class="text-button danger" id="deleteProjectBtn">Delete project</button>
           <button type="button" class="text-button" id="importProjectBtn">Import project</button>
           <button type="button" class="text-button" id="exportProjectBtn">Export project</button>
           <button type="button" class="text-button" id="clearLibraryBtn" hidden>Clear all</button>
@@ -146,6 +158,7 @@
         </div>
       </div>
       <p class="library-status" id="libraryStatus" role="status" aria-live="polite"></p>
+      <p class="archived-note" id="archivedNote" hidden>This project is archived. Restore it to add new tracks.</p>
       <div class="library-empty" id="libraryEmpty">Generate a track and it will be saved here on this device.</div>
       <div class="track-list" id="trackList"></div>
     </section>

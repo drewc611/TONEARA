@@ -76,3 +76,36 @@ export function createWavBlob(samples) {
 export function formatTime(seconds) {
   return `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 }
+
+/**
+ * Splits the track into equal slices and reports the loudness of each one, so a
+ * screen-reader user gets the same shape information the canvas conveys.
+ */
+export function describeWaveform(samples, seconds, sliceCount = 6) {
+  if (!samples?.length || !(seconds > 0)) return 'No audio to describe yet.';
+  const slices = [];
+  const width = Math.floor(samples.length / sliceCount);
+  for (let slice = 0; slice < sliceCount; slice += 1) {
+    let peak = 0;
+    const start = slice * width;
+    const end = slice === sliceCount - 1 ? samples.length : start + width;
+    for (let index = start; index < end; index += 1) peak = Math.max(peak, Math.abs(samples[index]));
+    slices.push(peak);
+  }
+  const loudest = Math.max(...slices, Number.EPSILON);
+  const label = (peak) => {
+    const relative = peak / loudest;
+    if (relative < 0.15) return 'near silence';
+    if (relative < 0.4) return 'quiet';
+    if (relative < 0.7) return 'moderate';
+    if (relative < 0.9) return 'loud';
+    return 'peak volume';
+  };
+  const spans = slices.map((peak, slice) => {
+    const from = formatTime((slice * seconds) / sliceCount);
+    const to = formatTime(((slice + 1) * seconds) / sliceCount);
+    return `${from} to ${to}, ${label(peak)}`;
+  });
+  const peakSlice = slices.indexOf(Math.max(...slices));
+  return `Waveform across ${formatTime(seconds)}: ${spans.join('; ')}. Loudest around ${formatTime(((peakSlice + 0.5) * seconds) / sliceCount)}.`;
+}
