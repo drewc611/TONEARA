@@ -17,7 +17,43 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+
+      # actions/dependency-review-action hard-fails when the repository's
+      # dependency graph is off, which is an owner setting no pull request can
+      # change. Detect it first so the job reports the real state instead of a
+      # failure that looks like a dependency problem.
+      - name: Check dependency graph availability
+        id: preflight
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -uo pipefail
+          status=$(curl -sS -o /dev/null -w '%{http_code}' \
+            -H "authorization: Bearer ${GH_TOKEN}" \
+            -H "accept: application/vnd.github+json" \
+            -H "x-github-api-version: 2022-11-28" \
+            "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/dependency-graph/sbom" || echo 000)
+          if [ "$status" = "200" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "### Dependency review did not run"
+              echo
+              echo "The dependency graph is not enabled for this repository, so"
+              echo "\`actions/dependency-review-action\` has nothing to compare against"
+              echo "(SBOM endpoint returned HTTP \`${status}\`)."
+              echo
+              echo "This gate stays inert until an owner enables **Dependency graph** at"
+              echo "<https://github.com/${GITHUB_REPOSITORY}/settings/security_analysis>."
+              echo "See \`docs/SECURITY_OPERATIONS.md\`."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning title=Dependency review inert::Enable the dependency graph to activate this gate."
+          fi
+
       - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        if: steps.preflight.outputs.available == 'true'
         with:
           fail-on-severity: low
           comment-summary-in-pr: on-failure

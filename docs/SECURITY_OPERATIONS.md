@@ -10,7 +10,7 @@ What the repository enforces on its own, and what only the owner can switch on.
 | Every workflow declares least-privilege `permissions` | `.github/workflows/`, enforced by `scripts/validate.mjs` |
 | Checkouts do not persist credentials in `.git/config` | `persist-credentials: false` on every checkout |
 | Write access scoped to the job that needs it | `release.yml`, `pages.yml`, `codeql.yml` |
-| Dependency review on every pull request | `.github/workflows/dependency-review.yml` |
+| Dependency review on every pull request | `.github/workflows/dependency-review.yml` (inert until the dependency graph is enabled, see below) |
 | CodeQL with `security-extended` and `security-and-quality` | `.github/workflows/codeql.yml` |
 | Supply-chain scorecard into code scanning | `.github/workflows/scorecard.yml` |
 | Build output never tracked in git | enforced by `scripts/validate.mjs` |
@@ -25,6 +25,7 @@ Scorecard results stay in this repository's code-scanning view. `publish_results
 These cannot be set from a pull request. Each one needs a visit to repository settings.
 
 - [ ] **Branch protection on `main`** — require pull requests, require CI / CodeQL / Dependency review to pass, require branches to be up to date, block force pushes and deletions, and include administrators. <https://github.com/drewc611/TONEARA/settings/branches>
+- [ ] **Dependency graph** — `dependency-review.yml` cannot compare anything without it and reports the gate as inert on every pull request until it is on. <https://github.com/drewc611/TONEARA/settings/security_analysis>
 - [ ] **Private vulnerability reporting** — `SECURITY.md` tells reporters to use it, so it has to be on. <https://github.com/drewc611/TONEARA/settings/security_analysis>
 - [ ] **Secret scanning and push protection** — blocks a credential from reaching history in the first place. Same page as above.
 - [ ] **Restrict `GITHUB_TOKEN` default permissions to read-only** — workflows already declare what they need. <https://github.com/drewc611/TONEARA/settings/actions>

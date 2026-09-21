@@ -18,7 +18,7 @@
 | Sensitive values hidden in imported records | Allowlisted track fields; unknown fields are discarded before storage |
 | Tampered browser storage | Stored tracks are re-validated through the generation contract on every read; entries that fail are dropped, not repaired |
 | Markup injection through any rendered value | The application builds DOM nodes and sets `textContent`; it contains no `innerHTML` |
-| Dependency compromise | Runtime has no third-party dependencies; dependency review runs on every pull request |
+| Dependency compromise | Runtime has no third-party dependencies; dependency review runs on every pull request once the owner enables the dependency graph |
 | Workflow supply-chain compromise | Every action pinned to a commit SHA, least-privilege `permissions` on every workflow and job, `persist-credentials: false` on every checkout, all enforced by `npm run check` |
 | Malicious repository changes | Pull-request checks, CodeQL with `security-extended`, dependency review, supply-chain scorecard, owner approval |
 | Stale or forged build output | `dist/` is never tracked in git and is rebuilt from source in CI |

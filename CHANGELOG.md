@@ -13,7 +13,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/) and s
 - Automated accessibility smoke test covering accessible names, ARIA references, heading order, and focus styles
 - Server-side hosted-provider adapter with per-request timeouts and bounded, jittered retries
 - Fixed-window rate limiter and generation instrumentation that cannot carry prompt content
-- Dependency review and supply-chain scorecard workflows
+- Dependency review and supply-chain scorecard workflows, with a preflight that reports dependency review as inert rather than failing when the dependency graph is off
 - Browser and device support matrix, security operations runbook, and ADR-003
 
 ### Changed

@@ -31,9 +31,9 @@
 - [x] Privacy and threat-model documentation
 - [x] Every GitHub Action pinned to a commit SHA
 - [x] Least-privilege workflow and job permissions
-- [x] Dependency review on every pull request
+- [ ] Dependency review on every pull request (workflow in place; needs the dependency graph enabled)
 - [x] Build output removed from version control
-- [ ] Branch protection, private vulnerability reporting, secret scanning and push protection (owner settings, see `docs/SECURITY_OPERATIONS.md`)
+- [ ] Dependency graph, branch protection, private vulnerability reporting, secret scanning and push protection (owner settings, see `docs/SECURITY_OPERATIONS.md`)
 
 ## Owner-controlled release gates
 
