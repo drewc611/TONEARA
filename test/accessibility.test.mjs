@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { visibleText } from './support/markup.mjs';
 import { describeWaveform } from '../app/music-engine.mjs';
 
 const html = await readFile('app/index.html', 'utf8');
@@ -18,23 +19,6 @@ function tags(name = '[a-zA-Z][a-zA-Z0-9-]*') {
     found.push({ tag: match[1].toLowerCase(), attributes, raw: match[0], index: match.index });
   }
   return found;
-}
-
-/**
- * Collects the characters that sit outside angle brackets, which is the visible
- * text of a fragment. Written as a scan rather than a tag-stripping replace:
- * that shape is an incomplete sanitizer, and it reads as one even where, as
- * here, nothing untrusted is involved.
- */
-function visibleText(markup) {
-  let depth = 0;
-  let text = '';
-  for (const character of markup) {
-    if (character === '<') depth += 1;
-    else if (character === '>') depth = Math.max(0, depth - 1);
-    else if (depth === 0) text += character;
-  }
-  return text.trim();
 }
 
 const identifiers = new Set(tags().map((node) => node.attributes.id).filter(Boolean));

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { collapsedText as collapse } from './support/markup.mjs';
 
 const read = (name) => readFile(new URL(`../app/${name}`, import.meta.url), 'utf8');
 
@@ -14,7 +15,6 @@ const structured = [...html.matchAll(/<script type="application\/ld\+json">([\s\
   .map(([, body]) => JSON.parse(body));
 const faq = structured.find((entry) => entry['@type'] === 'FAQPage');
 
-const collapse = (value) => value.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
 
 test('the canonical URL, sitemap and robots.txt all name the same site', () => {
   assert.match(canonical, /^https:\/\/[^\s"]+\/$/);
