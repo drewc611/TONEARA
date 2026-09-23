@@ -9,7 +9,7 @@ const check = (condition, message) => { if (!condition) failures.push(message); 
 const required = [
   'app/index.html', 'app/app.js', 'app/generation-service.mjs', 'app/manifest.webmanifest',
   'app/music-engine.mjs', 'app/project-file.mjs', 'app/project-library.mjs',
-  'app/sitemap.xml', 'app/sw.js', 'app/styles.css', 'app/assets/toneara-icon-192.png', 'app/assets/toneara-logo.png',
+  'app/404.html', 'app/robots.txt', 'app/sitemap.xml', 'app/sw.js', 'app/styles.css', 'app/assets/toneara-icon-192.png', 'app/assets/toneara-logo.png',
 ];
 for (const file of required) {
   try {
@@ -53,9 +53,27 @@ if (canonical) {
   const sitemap = await readFile('app/sitemap.xml', 'utf8');
   const location = sitemap.match(/<loc>([^<]+)<\/loc>/)?.[1];
   check(location === canonical, `sitemap.xml lists ${location}, but the canonical URL is ${canonical}.`);
-  for (const property of ['og:url', 'og:title', 'og:description', 'og:image', 'twitter:card']) {
+  for (const property of ['og:url', 'og:title', 'og:description', 'og:image', 'og:image:alt', 'twitter:card']) {
     check(html.includes(`"${property}"`), `Missing social metadata: ${property}`);
   }
+
+  const robots = await readFile('app/robots.txt', 'utf8');
+  const advertised = robots.match(/^Sitemap:\s*(\S+)$/m)?.[1];
+  check(advertised === `${canonical}sitemap.xml`, `robots.txt advertises ${advertised}, which is not the sitemap for ${canonical}.`);
+}
+
+// A single-page application gives a crawler almost nothing to rank. These
+// checks keep the prose that explains the product on the page itself.
+const title = html.match(/<title>([^<]*)<\/title>/)?.[1] ?? '';
+check(title.length > 24, `The page title carries no searchable description: "${title}"`);
+check(/<h1[\s>]/.test(html), 'The page must have an h1.');
+check(html.includes('id="aboutTitle"') && html.includes('id="faqTitle"'),
+  'The indexable about and FAQ sections are missing.');
+
+const structured = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+  .map(([, body]) => JSON.parse(body));
+for (const type of ['SoftwareApplication', 'FAQPage']) {
+  check(structured.some((entry) => entry['@type'] === type), `Missing JSON-LD block: ${type}`);
 }
 
 // --- Supply chain ------------------------------------------------------------

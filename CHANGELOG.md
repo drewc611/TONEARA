@@ -17,12 +17,16 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/) and s
 - Browser and device support matrix, security operations runbook, discoverability runbook, and ADR-003
 - Canonical URL, Open Graph and Twitter metadata, JSON-LD application description, and a sitemap for the hosted demo
 - README documentation of the synthesis engine, determinism guarantee, on-device data handling, and project file format
+- Indexable about and FAQ sections on the demo page, with `FAQPage` structured data generated from the visible answers
+- `robots.txt` and a styled, unindexed `404.html` for the hosted demo
+- Discoverability tests and validation covering canonical, sitemap and robots agreement, title length, structured data, and subpath-safe asset paths
 
 ### Changed
 
 - Every GitHub Action pinned to a commit SHA, with least-privilege permissions on every workflow and job
 - Checkouts no longer persist credentials; release and Pages write access scoped to the jobs that need it
 - CodeQL runs the `security-extended` and `security-and-quality` query packs
+- The page title now describes the product instead of naming it, and social cards carry image alt text and a locale
 - Repository validation now enforces action pinning, workflow permissions, untracked build output, and the absence of inline event handlers
 - The library renders through DOM nodes and `textContent` instead of `innerHTML`
 - Stored tracks are re-validated through the generation contract on every read

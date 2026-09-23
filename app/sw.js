@@ -1,4 +1,4 @@
-const CACHE_NAME = 'toneara-0.1.0-rc.2';
+const CACHE_NAME = 'toneara-0.1.0-rc.3';
 const CORE_ASSETS = [
   './',
   './index.html',

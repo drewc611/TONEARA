@@ -1,0 +1,7 @@
+# Served at the site root only behind a custom domain. On the default
+# github.io host this file sits under /TONEARA/, and crawlers read robots.txt
+# from the origin root alone (RFC 9309, section 2.3), so it is inert there.
+User-agent: *
+Allow: /
+
+Sitemap: https://drewc611.github.io/TONEARA/sitemap.xml

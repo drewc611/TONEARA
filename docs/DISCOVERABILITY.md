@@ -4,8 +4,11 @@ What the repository does for itself, and the five things only an account holder 
 
 ## What is automated
 
-- `app/index.html` carries a canonical URL, Open Graph and Twitter card tags, a JSON-LD `SoftwareApplication` block, and a full meta description.
-- `app/sitemap.xml` lists the hosted demo. `npm run check` fails if it stops matching the canonical URL, or if the social metadata goes missing.
+- `app/index.html` carries a canonical URL, Open Graph and Twitter card tags with alt text, a JSON-LD `SoftwareApplication` block, a `FAQPage` block, and a full meta description.
+- The page carries prose a crawler can rank. A studio interface is controls and labels, which reads to a search engine as a page about nothing; the about and FAQ sections explain what the engine does, that it is deterministic synthesis rather than a model, what leaves the device, and what exports.
+- `app/sitemap.xml` and `app/robots.txt` both name the canonical URL. `npm run check` fails if any of the three drift apart, if the social metadata goes missing, if the title stops describing the product, or if either JSON-LD block disappears.
+- `test/discoverability.test.mjs` asserts every marked-up FAQ answer is text the page actually shows. Structured data that outruns the page is a manual action in Search Console, not a ranking boost.
+- `app/404.html` gives GitHub Pages a styled, `noindex` fallback for unknown paths instead of its default page.
 - `.github/workflows/pages.yml` builds the demo on every push to `main` and publishes it as soon as Pages is enabled.
 
 ## Owner actions
@@ -20,7 +23,7 @@ Once enabled, the next push to `main` publishes to <https://drewc611.github.io/T
 
 ### 2. Fill in the repository metadata
 
-The **About** panel on the repository home page. These fields are what a search engine reads for the repository itself, and they are independent of Pages. All three are currently empty or unset.
+The **About** panel on the repository home page. These fields are what a search engine reads for the repository itself, and they are independent of Pages. The description currently reads `Make the music that you imagine`, which says nothing a person would type into a search box. Homepage and topics are unset.
 
 **Homepage**
 
@@ -68,5 +71,7 @@ Note before posting: the [LICENSE](../LICENSE) is proprietary. Reuse, redistribu
 
 ## What will not help
 
-- **A `robots.txt` in this repository.** Crawlers read `robots.txt` only at the origin root, `drewc611.github.io/robots.txt`, which belongs to a user site that does not exist. A file under `/TONEARA/` is ignored. This only becomes useful behind a custom domain.
+- **`app/robots.txt`, as things stand.** It ships, and it is correct, but crawlers read `robots.txt` only from the origin root (RFC 9309, section 2.3). Here that is `drewc611.github.io/robots.txt`, which belongs to a user site that does not exist, so the copy under `/TONEARA/` is never fetched. It starts working the moment the site moves behind a custom domain. Nothing is blocked in the meantime: absent a `robots.txt`, crawlers assume everything is allowed.
+
+  If you want an origin-root `robots.txt` on `github.io`, it has to live in a repository named `drewc611.github.io`, which becomes your user site at `https://drewc611.github.io/`. That repository does not exist today. Creating one would also give the project an inbound link from a page Google already crawls, which is step 5's whole point. Say the word and I will draft it, but creating a public repository under your account is your call, not mine.
 - **Worrying about duplicate-content filtering.** That applies to repositories cloned from a template. This one is original.

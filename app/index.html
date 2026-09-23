@@ -12,12 +12,15 @@
   <meta property="og:description" content="Generate original instrumentals from a text brief, entirely in your browser. No account, no API key, no upload." />
   <meta property="og:url" content="https://drewc611.github.io/TONEARA/" />
   <meta property="og:image" content="https://drewc611.github.io/TONEARA/assets/toneara-logo.png" />
+  <meta property="og:image:alt" content="The Toneara Studio mark: an amber waveform on a near-black field." />
+  <meta property="og:locale" content="en_US" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Toneara Studio — browser-first instrumental generation" />
   <meta name="twitter:description" content="Generate original instrumentals from a text brief, entirely in your browser. No account, no API key, no upload." />
   <meta name="twitter:image" content="https://drewc611.github.io/TONEARA/assets/toneara-logo.png" />
+  <meta name="twitter:image:alt" content="The Toneara Studio mark: an amber waveform on a near-black field." />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; media-src 'self' blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; worker-src 'self'; manifest-src 'self'" />
-  <title>Toneara Studio</title>
+  <title>Toneara Studio — browser-based AI music generator</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23090a0c'/%3E%3Cpath d='M15 38V26m9 20V18m9 23V23m9 29V12m9 31V21' stroke='%23ffb23e' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="./assets/toneara-icon-192.png" />
   <link rel="manifest" href="./manifest.webmanifest" />
@@ -42,6 +45,62 @@
     ],
     "isAccessibleForFree": true,
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+          {
+              "@type": "Question",
+              "name": "Does Toneara use a machine-learning model?",
+              "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. It is a deterministic synthesis engine, not a trained model, and there is no inference step and no hosted service behind it. The brief steers a seed rather than conditioning a network, which is why identical settings reproduce identical audio and why generation finishes in the time it takes to render samples."
+              }
+          },
+          {
+              "@type": "Question",
+              "name": "Is the music original, and can I use it commercially?",
+              "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "The audio is synthesised from scratch rather than assembled from samples or training data, so nothing is copied from an existing recording. Toneara itself is proprietary software: the repository is published for viewing and evaluation, and production use, redistribution and public deployment need written permission from the copyright holder. Ask before building anything commercial on it."
+              }
+          },
+          {
+              "@type": "Question",
+              "name": "What can I export?",
+              "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "WAV, at 22.05 kHz mono, downloaded straight from the page. Whole projects export as a JSON file that records the briefs and settings rather than the audio, so a project file stays small and re-renders identically wherever you import it. MP3 export is not available yet."
+              }
+          },
+          {
+              "@type": "Question",
+              "name": "Does it work offline?",
+              "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Toneara installs as a progressive web app and caches its own code on first visit, so generation, playback and export keep working with no network. Nothing about it needed the network in the first place."
+              }
+          },
+          {
+              "@type": "Question",
+              "name": "How long can a track be?",
+              "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Ten, twenty or thirty seconds, at a tempo between 68 and 144 BPM, across electronic, hip-hop, ambient and cinematic palettes with focused, uplifting, dark or dreamy moods. The variation control regenerates the same brief as a different take."
+              }
+          },
+          {
+              "@type": "Question",
+              "name": "Can I use it with a keyboard or a screen reader?",
+              "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Every control is reachable by keyboard, the waveform carries a text description of where the track is loud and quiet, section markers and five-second skip buttons move the playhead without dragging, and the interface honours a reduced-motion preference."
+              }
+          }
+      ]
   }
   </script>
 </head>
@@ -194,6 +253,39 @@
       <p class="archived-note" id="archivedNote" hidden>This project is archived. Restore it to add new tracks.</p>
       <div class="library-empty" id="libraryEmpty">Generate a track and it will be saved here on this device.</div>
       <div class="track-list" id="trackList"></div>
+    </section>
+
+    <section class="about" aria-labelledby="aboutTitle">
+      <p class="eyebrow">ABOUT</p>
+      <h2 id="aboutTitle">A music generator that runs in the browser tab</h2>
+      <p>Toneara turns a written brief into an original instrumental. You pick a genre, a mood, a tempo and a length, describe the feel you are after, and the studio renders audio you can play, seek through, save to a project and download as a WAV file. There is no account to create, no API key to paste and nothing to install.</p>
+
+      <h3>How a brief becomes audio</h3>
+      <p>The brief, genre, mood, tempo, length and variation number are hashed into a seed. That seed drives a synthesis engine that lays out a chord progression, a bass line, a percussion pattern and a lead voice, then renders them to 22.05 kHz mono samples and wraps the result in a WAV container. Everything happens in the page. The same settings always produce the same track, so a version you liked can be recovered by typing it again rather than by regenerating and hoping.</p>
+
+      <h3>What stays on your device</h3>
+      <p>All of it. The brief is never transmitted, generated audio is never uploaded, and projects are stored in the browser's own storage on the machine you are using. Clearing site data clears the library, which is why projects export to a JSON file you keep.</p>
+
+      <h2 id="faqTitle">Questions people ask</h2>
+      <dl class="faq" aria-labelledby="faqTitle">
+        <dt>Does Toneara use a machine-learning model?</dt>
+        <dd>No. It is a deterministic synthesis engine, not a trained model, and there is no inference step and no hosted service behind it. The brief steers a seed rather than conditioning a network, which is why identical settings reproduce identical audio and why generation finishes in the time it takes to render samples.</dd>
+
+        <dt>Is the music original, and can I use it commercially?</dt>
+        <dd>The audio is synthesised from scratch rather than assembled from samples or training data, so nothing is copied from an existing recording. Toneara itself is proprietary software: the repository is published for viewing and evaluation, and production use, redistribution and public deployment need written permission from the copyright holder. Ask before building anything commercial on it.</dd>
+
+        <dt>What can I export?</dt>
+        <dd>WAV, at 22.05 kHz mono, downloaded straight from the page. Whole projects export as a JSON file that records the briefs and settings rather than the audio, so a project file stays small and re-renders identically wherever you import it. MP3 export is not available yet.</dd>
+
+        <dt>Does it work offline?</dt>
+        <dd>Yes. Toneara installs as a progressive web app and caches its own code on first visit, so generation, playback and export keep working with no network. Nothing about it needed the network in the first place.</dd>
+
+        <dt>How long can a track be?</dt>
+        <dd>Ten, twenty or thirty seconds, at a tempo between 68 and 144 BPM, across electronic, hip-hop, ambient and cinematic palettes with focused, uplifting, dark or dreamy moods. The variation control regenerates the same brief as a different take.</dd>
+
+        <dt>Can I use it with a keyboard or a screen reader?</dt>
+        <dd>Yes. Every control is reachable by keyboard, the waveform carries a text description of where the track is loud and quiet, section markers and five-second skip buttons move the playhead without dragging, and the interface honours a reduced-motion preference.</dd>
+      </dl>
     </section>
   </main>
 
