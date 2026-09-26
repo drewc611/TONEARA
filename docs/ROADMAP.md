@@ -13,23 +13,24 @@
 - [x] Provider-neutral generation API contract
 - [x] Queued, processing, completed, failed, and cancelled states
 - [x] Automatic fallback to the local provider
-- Server-side secret handling and rate limits
-- Generation latency and failure instrumentation without prompt collection
+- [x] Server-side secret handling and rate limits (library in `server/`, not yet deployed)
+- [x] Generation latency and failure instrumentation without prompt collection
 
 ## v0.3 Creator workflow
 
 - Longer arrangements and section controls
 - [x] Portable, validated project-file export and import
+- [x] Named projects with rename, archive, and delete controls
 - Durable cross-device user-owned storage
-- MP3 plus WAV export
+- MP3 plus WAV export (blocked: needs a decision on sourcing the ISO constant tables)
 - [x] Keyboard-accessible playback and track-position controls
-- Richer waveform navigation and screen-reader descriptions
+- [x] Richer waveform navigation and screen-reader descriptions
 
 ## v1.0 Release candidate
 
 - Accounts, usage limits, billing, rights disclosures, and deletion controls
 - Cross-device library
 - Production observability and incident response
-- Browser and mobile release qualification
+- Browser and mobile release qualification (matrix and manual pass defined in `docs/BROWSER_SUPPORT.md`)
 
 Roadmap items are directional. An approved issue and architecture decision are required before implementation.

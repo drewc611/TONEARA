@@ -44,6 +44,24 @@ flowchart LR
     B --> L[Local track settings]
 ```
 
+## How generation actually works
+
+The release-candidate engine is deterministic synthesis, not a hosted model. A brief is hashed into a seed, and that seed drives the note choices, so the same prompt, genre, mood, tempo, length and variation always produce a byte-identical WAV. There is no inference server, no model download, and no warm-up.
+
+Each genre picks a root frequency and each mood picks a scale. The engine renders 22.05 kHz mono PCM one sample at a time: a detuned oscillator stack stepping through the scale, an exponential decay per half-beat, a pitched kick on the beat, a noise snare on the backbeat, plus a sub-oscillator layer for ambient and cinematic. The result is soft-clipped and fade-limited, then written to a 16-bit WAV in the browser.
+
+That design is why the application needs no account, no API key, and no network access after the first load, and why identical settings are reproducible across devices.
+
+## Data handling
+
+Prompts, track names and generation settings are held in `localStorage` on the device and are never transmitted. Generated audio lives in browser memory until downloaded. There is no analytics, no telemetry, and no third-party runtime request. The `server/` directory contains a hosted-provider adapter that is not deployed and is unreachable from the browser.
+
+Stored tracks are re-validated against the generation contract every time they are read, so a corrupted or tampered `localStorage` entry is discarded rather than trusted.
+
+## Project files
+
+Export produces a versioned JSON document (`schema: "toneara.project"`) carrying each track's full brief as provenance. Import validates the schema version, caps the file at 1 MB and 100 tracks, allowlists known fields, and discards everything else. Projects are named on-device and can be renamed, archived, restored, and deleted.
+
 ## Run locally
 
 Requires Node.js 20 or newer.
@@ -63,8 +81,9 @@ Open `http://localhost:4173`.
 |---|---|
 | `app/` | Shippable browser application |
 | `test/` | Deterministic engine tests |
+| `server/` | Server-side hosted-provider adapter, rate limiting, and instrumentation (not deployed) |
 | `scripts/` | Dependency-free validation and build |
-| `docs/` | Product, architecture, privacy, threat model, and roadmap |
+| `docs/` | Product, architecture, privacy, threat model, security operations, support matrix, and roadmap |
 | `.github/agents/` | Guarded GitHub Copilot custom-agent team |
 | `.github/workflows/` | CI, security, Pages, agent governance, and releases |
 
@@ -72,7 +91,7 @@ Open `http://localhost:4173`.
 
 The local engine and provider-neutral job contract deliver the complete credential-free experience. A later hosted-provider adapter can use the same contract while keeping provider keys off the client.
 
-See the [product requirements](docs/PRODUCT_REQUIREMENTS.md), [architecture](docs/ARCHITECTURE.md), [roadmap](docs/ROADMAP.md), and [AI team operating model](docs/AGENT_OPERATING_MODEL.md).
+See the [product requirements](docs/PRODUCT_REQUIREMENTS.md), [architecture](docs/ARCHITECTURE.md), [roadmap](docs/ROADMAP.md), [security operations](docs/SECURITY_OPERATIONS.md), [browser support](docs/BROWSER_SUPPORT.md), and [AI team operating model](docs/AGENT_OPERATING_MODEL.md).
 
 ## Ownership and license
 

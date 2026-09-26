@@ -1,4 +1,4 @@
-const CACHE_NAME = 'toneara-0.1.0-rc.1';
+const CACHE_NAME = 'toneara-0.1.0-rc.3';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const CORE_ASSETS = [
   './generation-service.mjs',
   './music-engine.mjs',
   './project-file.mjs',
+  './project-library.mjs',
   './manifest.webmanifest',
   './assets/toneara-logo.png',
   './assets/toneara-icon-192.png',
@@ -30,7 +31,7 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
 
   if (request.mode === 'navigate') {
-    event.respondWith(fetch(request).catch(() => caches.match('./index.html')));
+    event.respondWith(fetch(request).catch(async () => (await caches.match('./index.html')) || Response.error()));
     return;
   }
 
