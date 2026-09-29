@@ -131,3 +131,47 @@ test('the waveform description degrades safely with no audio', () => {
   assert.equal(describeWaveform(new Float32Array(0), 10), 'No audio to describe yet.');
   assert.equal(describeWaveform(new Float32Array(10), 0), 'No audio to describe yet.');
 });
+
+/** WCAG 2.2 relative luminance and contrast ratio for #rgb or #rrggbb colors. */
+function luminance(hex) {
+  const value = hex.length === 4 ? hex.slice(1).replace(/./g, '$&$&') : hex.slice(1);
+  const [r, g, b] = [0, 2, 4].map((offset) => {
+    const channel = parseInt(value.slice(offset, offset + 2), 16) / 255;
+    return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function contrast(first, second) {
+  const [light, dark] = [luminance(first), luminance(second)].sort((a, b) => b - a);
+  return (light + 0.05) / (dark + 0.05);
+}
+
+const tokens = Object.fromEntries([...css.matchAll(/--([\w-]+):(#[0-9a-fA-F]{3,6})\b/g)].map((match) => [match[1], match[2]]));
+const resolveColor = (value) => {
+  const token = value.match(/^var\(--([\w-]+)\)/);
+  if (token) return tokens[token[1]];
+  return /^#[0-9a-fA-F]{3,6}$/.test(value) ? value : undefined;
+};
+
+// Surfaces that text without its own background can sit on: page, panels, and form fields.
+const surfaces = [tokens.bg, tokens.panel, tokens.panel2, '#15171c', '#0b0d10'];
+
+test('text colors meet WCAG AA contrast on every surface they can sit on', () => {
+  const failures = [];
+  for (const [, selector, body] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    // Disabled controls are exempt from WCAG 1.4.3.
+    if (selector.includes(':disabled')) continue;
+    const color = body.match(/(?:^|;)color:([^;]+)/);
+    const foreground = color && resolveColor(color[1].trim());
+    if (!foreground) continue;
+    // A rule with its own background is checked against it; a gradient against every stop.
+    const background = body.match(/(?:^|;)background(?:-color)?:([^;]+)/)?.[1] ?? '';
+    const own = [...background.matchAll(/var\(--[\w-]+\)|#[0-9a-fA-F]{3,6}\b/g)].map((match) => resolveColor(match[0])).filter(Boolean);
+    for (const surface of own.length ? own : surfaces) {
+      const ratio = contrast(foreground, surface);
+      if (ratio < 4.5) failures.push(`${selector.trim()} ${foreground} on ${surface} is ${ratio.toFixed(2)}:1`);
+    }
+  }
+  assert.deepEqual(failures, [], `contrast below 4.5:1:\n${failures.join('\n')}`);
+});
