@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createProjectDocument, parseProject, serializeProject, PROJECT_SCHEMA } from '../app/project-file.mjs';
 
-const track = { prompt: 'warm city drive', name: 'Midnight Circuit', genre: 'electronic', mood: 'focused', bpm: 96, seconds: 10, variation: 1, createdAt: 1234 };
+const track = { prompt: 'warm city drive', name: 'Midnight Circuit', genre: 'electronic', mood: 'focused', bpm: 96, seconds: 10, variation: 1, structure: 'build', energy: 'intense', createdAt: 1234 };
 
 test('Toneara projects round trip without losing track settings', () => {
   const parsed = parseProject(serializeProject([track], { exportedAt: '2026-09-16T00:00:00.000Z' }));
@@ -25,4 +25,11 @@ test('files with an unknown schema are rejected', () => {
 
 test('future project versions are rejected safely', () => {
   assert.throws(() => parseProject(JSON.stringify({ schema: PROJECT_SCHEMA, version: 99, tracks: [] })), (error) => error.code === 'unsupported_project_version');
+});
+
+test('a project file written before arrangement existed imports with the defaults', () => {
+  const { structure, energy, ...legacy } = track;
+  const [imported] = parseProject(serializeProject([legacy])).tracks;
+  assert.equal(imported.structure, 'loop');
+  assert.equal(imported.energy, 'balanced');
 });

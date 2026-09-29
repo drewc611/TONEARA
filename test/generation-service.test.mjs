@@ -44,3 +44,14 @@ test('an aborted job stops before audio is returned', async () => {
   const service = createGenerationService({ primary: createLocalProvider({ stageDelay: 0 }) });
   await assert.rejects(() => service.generate(request, { signal: controller.signal }), (error) => error.code === 'cancelled');
 });
+
+test('arrangement and energy default so tracks saved before this release stay valid', () => {
+  const normalized = createGenerationRequest(request);
+  assert.equal(normalized.structure, 'loop');
+  assert.equal(normalized.energy, 'balanced');
+});
+
+test('unsupported arrangement and energy values are rejected', () => {
+  assert.throws(() => createGenerationRequest({ ...request, structure: 'random-sections' }), (error) => error.code === 'invalid_structure');
+  assert.throws(() => createGenerationRequest({ ...request, energy: 'maximum' }), (error) => error.code === 'invalid_energy');
+});

@@ -6,6 +6,8 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/) and s
 
 ### Added
 
+- Arrangement control shaping a brief as a steady loop, a rising build, or alternating verse and chorus
+- Energy shaping at gentle, balanced, or intense, carried through generation, storage, and project files
 - Named projects with create, rename, archive, restore, and delete controls
 - Automatic migration of the v1 flat track library into a named project
 - Section markers, five-second skip controls, and a spoken waveform description
@@ -30,11 +32,13 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/) and s
 - Repository validation now enforces action pinning, workflow permissions, untracked build output, and the absence of inline event handlers
 - The library renders through DOM nodes and `textContent` instead of `innerHTML`
 - Stored tracks are re-validated through the generation contract on every read
+- Arrangement and energy default to a steady loop at balanced level, so a track or project file written before this release still validates. Neither feeds the render seed, so an existing brief keeps the take it always had and `variation` remains the only control that rolls a new one
 
 ### Fixed
 
 - The `Deploy demo` workflow failed on every run on `main`. It called `actions/configure-pages` with `enablement: true`, which cannot create a Pages site because that needs repository admin rather than a workflow token. The step is removed: it supplies a base URL to static site generators, and every path in the app is already relative. Deployment now reports plainly when Pages is not yet enabled instead of failing.
 - Six secondary text colours (prompt counter, form note, field hints, empty library, delete button, footer) measured 3.0 to 3.9:1 against the dark panels, below WCAG AA. They now share a `--subtle` token at 4.9:1 or better on every surface, and a test fails the build if any text colour drops below 4.5:1
+- Saving or importing two takes of one brief that differed only in arrangement or energy kept just one of them. Both the workspace and project import now deduplicate on a track's full audio identity, every control that changes a sample, instead of prompt and variation alone
 - Stale, incomplete `dist/` build output removed from version control
 - Offline navigation no longer fails when the cached shell is missing
 - Library actions no longer act on out-of-range indices

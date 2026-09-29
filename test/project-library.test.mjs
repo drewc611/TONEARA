@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   activeProject, addProject, addTrack, createWorkspaceStore, deleteProject,
-  LEGACY_LIBRARY_KEY, MAX_PROJECTS, normalizeWorkspace, renameProject,
-  selectProject, setProjectArchived, setTracks, WORKSPACE_KEY,
+  LEGACY_LIBRARY_KEY, MAX_PROJECTS, MAX_TRACKS_PER_PROJECT, mergeTracks, normalizeWorkspace,
+  renameProject, selectProject, setProjectArchived, setTracks, trackKey, WORKSPACE_KEY,
 } from '../app/project-library.mjs';
 
 const track = { prompt: 'warm city drive', name: 'Midnight', genre: 'electronic', mood: 'focused', bpm: 96, seconds: 10, variation: 1 };
@@ -119,4 +119,37 @@ test('a full device surfaces a readable error', () => {
   const full = { getItem: () => null, setItem() { throw new Error('QuotaExceededError'); } };
   const store = createWorkspaceStore(full);
   assert.throws(() => store.write(store.read()), /no room left/);
+});
+
+test('audio identity covers every control that changes the sound', () => {
+  for (const change of [{ prompt: 'cold rain' }, { genre: 'ambient' }, { mood: 'dark' }, { bpm: 100 },
+    { seconds: 20 }, { variation: 2 }, { structure: 'build' }, { energy: 'intense' }]) {
+    assert.notEqual(trackKey({ ...track, ...change }), trackKey(track), `${Object.keys(change)[0]} must change the key`);
+  }
+  assert.equal(trackKey({ ...track, name: 'Another name', createdAt: 999 }), trackKey(track));
+  assert.equal(trackKey({ ...track, structure: 'loop', energy: 'balanced' }), trackKey(track));
+});
+
+test('saving a different arrangement keeps the earlier take', () => {
+  let workspace = normalizeWorkspace(null);
+  const id = activeProject(workspace).id;
+  workspace = addTrack(workspace, id, { ...track, structure: 'loop' });
+  workspace = addTrack(workspace, id, { ...track, structure: 'build' });
+  workspace = addTrack(workspace, id, { ...track, structure: 'build', energy: 'intense' });
+  assert.equal(activeProject(workspace).tracks.length, 3);
+  workspace = addTrack(workspace, id, { ...track, structure: 'build', name: 'Renamed' });
+  const tracks = activeProject(workspace).tracks;
+  assert.equal(tracks.length, 3, 'the same arrangement still replaces its predecessor');
+  assert.equal(tracks[0].name, 'Renamed');
+});
+
+test('merging keeps one track per audio identity and respects the project cap', () => {
+  const matrix = ['loop', 'build', 'versechorus'].flatMap((structure) =>
+    ['gentle', 'balanced', 'intense'].map((energy) => ({ ...track, structure, energy })));
+  assert.equal(mergeTracks(matrix, []).length, 9);
+  assert.equal(mergeTracks(matrix, matrix).length, 9, 'importing the same file twice adds nothing');
+  assert.equal(mergeTracks([{ ...track, structure: 'loop', energy: 'balanced' }], [track]).length, 1);
+  assert.equal(mergeTracks(matrix, [], 4).length, 4);
+  assert.equal(mergeTracks(Array.from({ length: MAX_TRACKS_PER_PROJECT + 20 },
+    (unused, index) => ({ ...track, prompt: `brief ${index}` })), []).length, MAX_TRACKS_PER_PROJECT);
 });

@@ -16,6 +16,12 @@ function seededRandom(seed) {
 export function createSamples(options) {
   const sampleCount = SAMPLE_RATE * options.seconds;
   const output = new Float32Array(sampleCount);
+  const structure = options.structure || 'loop';
+  const energy = options.energy || 'balanced';
+  // Arrangement and energy stay out of the seed on purpose. They re-shape the
+  // take the brief already had, so a track saved before this release still
+  // renders the audio its owner heard, and `variation` remains the only control
+  // that rolls a different take.
   const random = seededRandom(hashText(`${options.prompt}${options.genre}${options.mood}${options.variation}`));
   const beat = 60 / options.bpm;
   const roots = { electronic: 55, hiphop: 49, ambient: 65.41, cinematic: 43.65 };
@@ -28,9 +34,17 @@ export function createSamples(options) {
   const base = roots[options.genre];
   const scale = scales[options.mood];
   const shift = Math.floor(random() * scale.length);
+  const energyGain = { gentle: 0.72, balanced: 1, intense: 1.28 }[energy];
 
   for (let index = 0; index < sampleCount; index += 1) {
     const time = index / SAMPLE_RATE;
+    // Where we are in the track, so a build can rise and a chorus can lift.
+    const position = time / options.seconds;
+    const sectionGain = structure === 'build'
+      ? 0.5 + position * 0.75
+      : structure === 'versechorus'
+        ? [0.68, 1.12, 0.78, 1.24][Math.min(3, Math.floor(position * 4))]
+        : 1;
     const step = Math.floor(time / (beat / 2));
     const frequency = base * Math.pow(2, scale[(step + shift) % scale.length] / 12);
     const phase = time * frequency * Math.PI * 2;
@@ -44,7 +58,7 @@ export function createSamples(options) {
     if (options.genre === 'ambient') value += Math.sin(phase * 0.25) * 0.09;
     if (options.genre === 'cinematic') value += Math.sin(phase * 0.125) * 0.12;
     const fade = Math.min(1, time / 0.3, (options.seconds - time) / 0.5);
-    output[index] = Math.tanh(value * 1.4) * Math.max(0, fade);
+    output[index] = Math.tanh(value * 1.4 * energyGain * sectionGain) * Math.max(0, fade);
   }
   return output;
 }

@@ -38,6 +38,30 @@ export function normalizeStoredTrack(track) {
   }
 }
 
+/**
+ * A track's audio identity: every control that changes the rendered sound. Two
+ * briefs that differ only in arrangement or energy are different tracks, so
+ * saving one must not displace the other. Display name and timestamp are
+ * excluded because neither changes a sample.
+ */
+export function trackKey(track) {
+  return JSON.stringify([
+    track.prompt, track.genre, track.mood, Number(track.bpm), Number(track.seconds),
+    Number(track.variation || 1), track.structure || 'loop', track.energy || 'balanced',
+  ]);
+}
+
+/** Merges incoming tracks ahead of existing ones, keeping one per audio identity. */
+export function mergeTracks(incoming, current = [], limit = MAX_TRACKS_PER_PROJECT) {
+  const seen = new Set();
+  return [...incoming, ...current].filter((track) => {
+    const key = trackKey(track);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0, limit);
+}
+
 export function normalizeTracks(tracks) {
   if (!Array.isArray(tracks)) return [];
   return tracks.map(normalizeStoredTrack).filter(Boolean).slice(0, MAX_TRACKS_PER_PROJECT);
@@ -180,9 +204,9 @@ export function setTracks(workspace, id, tracks) {
 export function addTrack(workspace, id, track) {
   const normalized = normalizeStoredTrack(track);
   if (!normalized) throw new GenerationError('This track could not be saved.', 'invalid_track');
+  const key = trackKey(normalized);
   return replaceProject(workspace, id, (project) => ({
     ...project,
-    tracks: [normalized, ...project.tracks.filter((existing) =>
-      !(existing.prompt === normalized.prompt && existing.variation === normalized.variation))],
+    tracks: [normalized, ...project.tracks.filter((existing) => trackKey(existing) !== key)],
   }));
 }

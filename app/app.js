@@ -2,7 +2,7 @@ import { createGenerationService, createLocalProvider, JOB_STATUS } from './gene
 import { describeWaveform, formatTime } from './music-engine.mjs';
 import { parseProject, serializeProject } from './project-file.mjs';
 import {
-  activeProject, addProject, addTrack, createWorkspaceStore, deleteProject,
+  activeProject, addProject, addTrack, createWorkspaceStore, deleteProject, mergeTracks,
   MAX_PROJECT_NAME, renameProject, selectProject, setProjectArchived, setTracks,
 } from './project-library.mjs';
 
@@ -18,6 +18,9 @@ const audio = $('#audioPlayer');
 const playButton = $('#playBtn');
 const seekBar = $('#seekBar');
 const projectSelect = $('#projectSelect');
+
+const ARRANGEMENT_LABELS = { loop: 'steady loop', build: 'rising build', versechorus: 'verse and chorus' };
+const arrangementLabel = (track) => ARRANGEMENT_LABELS[track.structure] || ARRANGEMENT_LABELS.loop;
 
 const store = createWorkspaceStore(globalThis.localStorage);
 let workspace = store.read();
@@ -150,7 +153,7 @@ function renderLibrary() {
     }),
     element('div', { className: 'library-meta' }, [
       element('strong', { textContent: track.name }),
-      element('span', { textContent: `${track.genre} · ${track.mood} · ${track.bpm} BPM · ${formatTime(track.seconds)}` }),
+      element('span', { textContent: `${track.genre} · ${track.mood} · ${arrangementLabel(track)} · ${track.energy || 'balanced'} · ${track.bpm} BPM · ${formatTime(track.seconds)}` }),
     ]),
     element('button', {
       className: 'remix', type: 'button', textContent: 'Open settings',
@@ -183,6 +186,8 @@ function loadSettings(track) {
   tempoInput.value = track.bpm;
   tempoValue.textContent = `${track.bpm} BPM`;
   $('#duration').value = track.seconds;
+  $('#structure').value = track.structure || 'loop';
+  $('#energy').value = track.energy || 'balanced';
   variationInput.value = track.variation || 1;
   variationValue.textContent = String(track.variation || 1).padStart(2, '0');
   form.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -240,6 +245,8 @@ async function generate(save = true) {
     bpm: Number(tempoInput.value),
     seconds: Number($('#duration').value),
     variation: Number(variationInput.value),
+    structure: $('#structure').value,
+    energy: $('#energy').value,
   };
   if (!options.prompt) return promptInput.focus();
 
@@ -290,7 +297,7 @@ async function generate(save = true) {
   $('#trackTitle').textContent = options.name || titleFrom(options.prompt);
   $('#durationBadge').textContent = formatTime(options.seconds);
   $('#totalTime').textContent = formatTime(options.seconds);
-  $('#trackTags').replaceChildren(...[options.genre, options.mood, `${options.bpm} BPM`, `Variation ${options.variation}`]
+  $('#trackTags').replaceChildren(...[options.genre, options.mood, arrangementLabel(options), options.energy, `${options.bpm} BPM`, `Variation ${options.variation}`]
     .map((value) => element('span', { textContent: value[0].toUpperCase() + value.slice(1) })));
 
   drawWave(samples);
@@ -397,8 +404,7 @@ $('#projectFileInput').addEventListener('change', async (event) => {
   try {
     const imported = parseProject(await file.text()).tracks;
     const project = activeProject(workspace);
-    const merged = [...imported, ...project.tracks].filter((track, index, all) =>
-      index === all.findIndex((candidate) => candidate.prompt === track.prompt && candidate.variation === track.variation));
+    const merged = mergeTracks(imported, project.tracks);
     commit(setTracks(workspace, project.id, merged));
     setLibraryStatus(`Imported ${imported.length} track${imported.length === 1 ? '' : 's'} into ${project.name}.`);
   } catch (error) {
