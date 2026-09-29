@@ -34,6 +34,7 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/) and s
 ### Fixed
 
 - The `Deploy demo` workflow failed on every run on `main`. It called `actions/configure-pages` with `enablement: true`, which cannot create a Pages site because that needs repository admin rather than a workflow token. The step is removed: it supplies a base URL to static site generators, and every path in the app is already relative. Deployment now reports plainly when Pages is not yet enabled instead of failing.
+- Six secondary text colours (prompt counter, form note, field hints, empty library, delete button, footer) measured 3.0 to 3.9:1 against the dark panels, below WCAG AA. They now share a `--subtle` token at 4.9:1 or better on every surface, and a test fails the build if any text colour drops below 4.5:1
 - Stale, incomplete `dist/` build output removed from version control
 - Offline navigation no longer fails when the cached shell is missing
 - Library actions no longer act on out-of-range indices

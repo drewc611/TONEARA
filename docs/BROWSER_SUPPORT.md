@@ -32,6 +32,6 @@ A platform is qualified when a person completes this pass on real hardware and r
 
 ## Automated coverage
 
-`npm run check` and `npm test` enforce the structural half of this: accessible names on every control, resolvable ARIA references, no positive `tabindex`, heading order, a focus-visible rule on every interactive control, a reduced-motion rule, and a working skip link. See `test/accessibility.test.mjs`.
+`npm run check` and `npm test` enforce the structural half of this: accessible names on every control, resolvable ARIA references, no positive `tabindex`, heading order, a focus-visible rule on every interactive control, a reduced-motion rule, and a working skip link. It also checks every text colour in the stylesheet against WCAG AA (4.5:1) on its own background, or on every page surface when it has none. See `test/accessibility.test.mjs`.
 
-Automation cannot judge colour contrast against a rendered page, screen-reader output quality, or touch-target comfort. Those stay manual.
+The stylesheet check cannot see text over images or colours set from script, and automation cannot judge screen-reader output quality or touch-target comfort. Those stay manual.
