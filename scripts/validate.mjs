@@ -44,6 +44,9 @@ for (const hook of ['aria-live="polite"', 'aria-busy="false"', 'aria-label="Trac
 for (const control of ['id="importProjectBtn"', 'id="exportProjectBtn"', 'id="projectFileInput"']) {
   check(html.includes(control), `Missing project control: ${control}`);
 }
+for (const control of ['id="structure"', 'id="energy"']) {
+  check(html.includes(control), `Missing arrangement control: ${control}`);
+}
 
 // --- Discoverability ---
 
